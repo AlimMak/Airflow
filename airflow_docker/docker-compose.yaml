@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+
+  redis:
+    image: redis:7
+    container_name: airflow-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+
+  airflow-init:
+    image: ${AIRFLOW_IMAGE_NAME}
+    container_name: airflow-init
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: "IqfgV17aR8cJ4Ar25X6FCtMIWfV2S-ybdldIUeuYe4c="
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    entrypoint: /bin/bash
+    command: >
+      -lc "airflow db init && airflow users create --username airflow --password airflow --firstname Alim --lastname User --role Admin --email alim@example.com"
+
+  airflow-webserver:
+    image: ${AIRFLOW_IMAGE_NAME}
+    container_name: airflow-webserver
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: "IqfgV17aR8cJ4Ar25X6FCtMIWfV2S-ybdldIUeuYe4c="
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+    command: webserver
+
+  airflow-scheduler:
+    image: ${AIRFLOW_IMAGE_NAME}
+    container_name: airflow-scheduler
+    restart: always
+    depends_on:
+      - airflow-webserver
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: "IqfgV17aR8cJ4Ar25X6FCtMIWfV2S-ybdldIUeuYe4c="
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: scheduler
+
+  airflow-triggerer:
+    image: ${AIRFLOW_IMAGE_NAME}
+    container_name: airflow-triggerer
+    restart: always
+    depends_on:
+      - airflow-webserver
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: "IqfgV17aR8cJ4Ar25X6FCtMIWfV2S-ybdldIUeuYe4c="
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: triggerer
+
+  airflow-cli:
+    image: ${AIRFLOW_IMAGE_NAME}
+    container_name: airflow-cli
+    profiles: ["cli"]
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__FERNET_KEY: "IqfgV17aR8cJ4Ar25X6FCtMIWfV2S-ybdldIUeuYe4c="
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    entrypoint: /bin/bash
+
+networks:
+  default:
+    name: airflow_default_network
+
+
