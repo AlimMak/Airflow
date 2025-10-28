@@ -14781,3 +14781,10 @@ NameError: name 'fi' is not defined
 [2025-10-28T16:25:51.277+0000] {logging_mixin.py:188} INFO - [2025-10-28T16:25:51.277+0000] {dag.py:3096} INFO - Sync 1 DAGs
 [2025-10-28T16:25:51.291+0000] {logging_mixin.py:188} INFO - [2025-10-28T16:25:51.291+0000] {dag.py:3954} INFO - Setting next_dagrun for download_dataset_dag to None, run_after=None
 [2025-10-28T16:25:51.307+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/census_data_pipeline.py took 0.510 seconds
+[2025-10-28T16:26:22.018+0000] {processor.py:161} INFO - Started process (PID=28510) to work on /opt/airflow/dags/census_data_pipeline.py
+[2025-10-28T16:26:22.019+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/census_data_pipeline.py for tasks to queue
+[2025-10-28T16:26:22.023+0000] {logging_mixin.py:188} INFO - [2025-10-28T16:26:22.023+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/census_data_pipeline.py
+[2025-10-28T16:26:22.444+0000] {processor.py:840} INFO - DAG(s) 'download_dataset_dag' retrieved from /opt/airflow/dags/census_data_pipeline.py
+[2025-10-28T16:26:22.462+0000] {logging_mixin.py:188} INFO - [2025-10-28T16:26:22.462+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-10-28T16:26:22.479+0000] {logging_mixin.py:188} INFO - [2025-10-28T16:26:22.479+0000] {dag.py:3954} INFO - Setting next_dagrun for download_dataset_dag to None, run_after=None
+[2025-10-28T16:26:22.494+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/census_data_pipeline.py took 0.483 seconds
