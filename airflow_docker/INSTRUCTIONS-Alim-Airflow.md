@@ -127,6 +127,34 @@ docker compose up -d
 
 ---
 
+## Security: Fernet key rotation (done)
+
+- docker-compose now reads the key from `.env` as `FERNET_KEY` (no hardcoded key).
+- `.env` is git-ignored to avoid leaking secrets.
+- Rotation we performed:
+  1) Generated a new key and temporarily set `FERNET_KEY=new,old` in `.env`.
+  2) Restarted services and ran:
+     ```powershell
+     docker compose exec -T airflow-webserver airflow rotate-fernet-key
+     ```
+  3) Set `FERNET_KEY=new` only and restarted services again.
+
+Rotate again later (recipe):
+```powershell
+docker run --rm python:3.12-slim python -c "import base64,os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"
+# Edit .env → FERNET_KEY=newKey,oldKey
+docker compose down
+docker compose up -d
+docker compose exec -T airflow-webserver airflow rotate-fernet-key
+# Edit .env → FERNET_KEY=newKey
+docker compose down
+docker compose up -d
+```
+
+If the old key existed in a remote repo, rewrite history with `git filter-repo` or BFG and force-push to fully purge it.
+
+---
+
 ## Add more DAGs
 
 - Place new `.py` files under `./dags/`. Airflow will auto-detect within ~1 minute.

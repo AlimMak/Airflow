@@ -1,0 +1,9 @@
+# Airflow local project ignores
+.env
+airflow_docker/logs/
+# Python cache
+__pycache__/
+*.pyc
+# VSCode/IDE
+.vscode/
+.idea/
