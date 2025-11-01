@@ -201,7 +201,29 @@ AIRFLOW_IMAGE_NAME=apache/airflow:2.9.1-python3.12
 
 ---
 
-## What’s next
+## Monitor DAGs from Terminal (Real-time)
+
+The UI auto-refreshes but with a delay. For real-time monitoring:
+
+```powershell
+# View recent DAG runs
+docker compose exec -T airflow-webserver airflow dags list-runs --dag-id download_dataset_dag --no-backfill --state running
+
+# Stream logs for a specific task (real-time)
+docker compose exec -T airflow-webserver airflow tasks logs download_dataset_dag store_task 2025-11-01
+
+# Check task states for a DAG run
+docker compose exec -T airflow-webserver airflow tasks states-for-dag-run download_dataset_dag manual__2025-11-01T01:45:49.637991+00:00
+
+# Quick status check
+docker compose exec -T airflow-webserver airflow dags state download_dataset_dag 2025-11-01
+```
+
+**UI vs Terminal:**
+- **UI**: Auto-refreshes every ~30 seconds, good for overall status
+- **Terminal**: Real-time logs, useful for debugging and immediate feedback
+
+## What's next
 
 - Create new DAGs in `./dags/` and enable them in the UI.
 - Use the Admin → Connections and Variables screens to configure external systems.

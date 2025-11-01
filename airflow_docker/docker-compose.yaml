@@ -38,7 +38,7 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.* SQLAlchemy==1.4.* psycopg2-binary"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -59,7 +59,7 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.* SQLAlchemy==1.4.* psycopg2-binary"
     ports:
       - "8080:8080"
     volumes:
@@ -84,7 +84,7 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.* SQLAlchemy==1.4.* psycopg2-binary"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -102,7 +102,7 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.*"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas==2.2.* SQLAlchemy==1.4.* psycopg2-binary"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
